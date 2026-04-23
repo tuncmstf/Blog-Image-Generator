@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Görsel Üretici | Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Blog Görsel <span>Üretici</span></h1>
+            <p>Blog yazılarınız için optimize edilmiş, logolu ve metinli dinamik görseller (WEBP).</p>
+        </header>
+
+        <main class="app-main">
+            <!-- Sol Panel: Kontroller -->
+            <section class="controls-panel glass-panel">
+                <div class="control-group">
+                    <label>1. Ana Görsel Kaynağı</label>
+                    <div class="tabs">
+                        <button class="tab-btn active" id="tabUpload">Bilgisayardan Yükle</button>
+                        <button class="tab-btn" id="tabAI">Yapay Zeka (AI)</button>
+                    </div>
+
+                    <!-- Upload Panel -->
+                    <div id="panelUpload" class="tab-panel active">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="mainImage" accept="image/*">
+                            <span class="file-custom">Görsel Seç</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Panel -->
+                    <div id="panelAI" class="tab-panel" style="display: none;">
+                        <div class="api-key-row">
+                            <input type="password" id="apiKeyInput" placeholder="Gemini API Key (AIza...)">
+                            <button id="saveApiKeyBtn" class="small-btn">Kaydet</button>
+                        </div>
+                        <textarea id="aiPrompt" rows="2" placeholder="Örn: İngilizce öğrenen mutlu bir öğrenci, illüstrasyon, 4k..."></textarea>
+                        <button id="generateAiBtn" class="primary-btn secondary-style">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><polyline points="21 3 21 8 16 8"></polyline></svg>
+                            Görsel Üret
+                        </button>
+                        <p id="aiStatus" class="status-text"></p>
+                    </div>
+                </div>
+
+                <div class="control-group" id="textLayersContainer">
+                    <label>2. Metin Katmanları</label>
+                    <div id="textLayersList"></div>
+                    <button id="addTextBtn" class="small-btn" style="margin-top: 0.5rem; width: 100%; border-style: dashed;">+ Yeni Yazı Ekle</button>
+                </div>
+
+                <div class="control-group">
+                    <label for="logoImage">3. Logo Görseli</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="logoImage" accept="image/png, image/jpeg, image/webp, image/svg+xml">
+                        <span class="file-custom">Logo Seç</span>
+                    </div>
+                    <div class="settings-row">
+                        <div class="slider-wrapper">
+                            <label for="logoSize">Boyut:</label>
+                            <input type="range" id="logoSize" min="5" max="50" value="22">
+                        </div>
+                        <div class="select-wrapper">
+                            <label for="logoPos">Konum:</label>
+                            <select id="logoPos">
+                                <option value="br">Sağ Alt</option>
+                                <option value="bl">Sol Alt</option>
+                                <option value="tr">Sağ Üst</option>
+                                <option value="tl">Sol Üst</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="logoBgCheck"> Arka Plan Ekle
+                        </label>
+                        <div class="color-picker-wrapper" id="logoBgColorWrapper" style="display: none; margin-top: 0;">
+                            <label for="logoBgColor" style="min-width: 50px;">Renk:</label>
+                            <input type="color" id="logoBgColor" value="#ffffff">
+                        </div>
+                        <div class="slider-wrapper" id="logoBgPaddingWrapper" style="display: none; margin-top: 0;">
+                            <label for="logoBgPadding" style="min-width: 50px;">Boşluk:</label>
+                            <input type="range" id="logoBgPadding" min="0" max="50" value="20">
+                        </div>
+                        <div class="slider-wrapper" id="logoBgRadiusWrapper" style="display: none; margin-top: 0;">
+                            <label for="logoBgRadius" style="min-width: 50px;">Kavis:</label>
+                            <input type="range" id="logoBgRadius" min="0" max="50" value="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <button id="downloadBtn" class="primary-btn" style="margin-top: 0; flex: 1;" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        WEBP İndir
+                    </button>
+                    <button id="downloadAvifBtn" class="primary-btn secondary-style" style="margin-top: 0; flex: 1;" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        AVIF İndir
+                    </button>
+                </div>
+            </section>
+
+            <!-- Sağ Panel: Önizleme -->
+            <section class="preview-panel glass-panel">
+                <h2>Canlı Önizleme</h2>
+                <div class="canvas-container">
+                    <canvas id="previewCanvas"></canvas>
+                    <div id="placeholder" class="placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <p>Lütfen sol taraftan bir ana görsel seçin.</p>
+                    </div>
+                </div>
+                <p class="helper-text">👉 <b>Metinleri ve Logoyu fare ile sürükleyip istediğiniz yere taşıyabilirsiniz!</b></p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Yazı Şablonu (Gizli) -->
+    <template id="textLayerTemplate">
+        <div class="text-layer">
+            <div class="text-layer-header">
+                <span class="layer-title">Yazı Katmanı</span>
+                <button class="remove-layer-btn" title="Sil">✕</button>
+            </div>
+            <textarea class="layer-text" rows="2" placeholder="Yazınızı buraya girin..."></textarea>
+            <div class="settings-row">
+                <div class="color-picker-wrapper">
+                    <label>Renk:</label>
+                    <input type="color" class="layer-color" value="#ffffff">
+                </div>
+                <div class="slider-wrapper">
+                    <label>Boyut:</label>
+                    <input type="range" class="layer-size" min="10" max="100" value="40">
+                </div>
+            </div>
+            <div class="settings-row align-row">
+                <label>Hizalama:</label>
+                <div class="align-group">
+                    <button class="align-btn" data-align="left" title="Sola Yasla">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="15" y1="12" x2="3" y2="12"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+                    </button>
+                    <button class="align-btn active" data-align="center" title="Ortala">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="19" y1="12" x2="5" y2="12"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+                    </button>
+                    <button class="align-btn" data-align="right" title="Sağa Yasla">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="12" x2="9" y2="12"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
