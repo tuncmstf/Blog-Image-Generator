@@ -334,6 +334,16 @@ select {
     box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.4);
 }
 
+.tertiary-style {
+    background: #10b981;
+    margin-top: 0.5rem;
+}
+
+.tertiary-style:hover:not(:disabled) {
+    background: #059669;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+}
+
 .small-btn {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);

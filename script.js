@@ -12,6 +12,7 @@ const logoBgRadiusWrapper = document.getElementById('logoBgRadiusWrapper');
 
 const downloadBtn = document.getElementById('downloadBtn');
 const downloadAvifBtn = document.getElementById('downloadAvifBtn');
+const downloadJpgBtn = document.getElementById('downloadJpgBtn');
 const canvas = document.getElementById('previewCanvas');
 const ctx = canvas.getContext('2d');
 const placeholder = document.getElementById('placeholder');
@@ -230,6 +231,7 @@ generateAiBtn.addEventListener('click', async () => {
             canvas.style.display = 'block';
             downloadBtn.disabled = false;
             downloadAvifBtn.disabled = false;
+            downloadJpgBtn.disabled = false;
             
             // Original width and height
             canvas.width = img.width;
@@ -258,6 +260,7 @@ mainImageInput.addEventListener('change', handleMainImageUpload);
 logoImageInput.addEventListener('change', handleLogoUpload);
 downloadBtn.addEventListener('click', () => downloadImage('webp'));
 downloadAvifBtn.addEventListener('click', () => downloadImage('avif'));
+downloadJpgBtn.addEventListener('click', () => downloadImage('jpeg'));
 
 // Mouse events for canvas drag and drop
 canvas.addEventListener('mousedown', handleMouseDown);
@@ -426,6 +429,7 @@ function handleMainImageUpload(e) {
             canvas.style.display = 'block';
             downloadBtn.disabled = false;
             downloadAvifBtn.disabled = false;
+            downloadJpgBtn.disabled = false;
             
             // Use original dimensions, WordPress will handle resizing
             canvas.width = img.width;
@@ -642,8 +646,19 @@ function drawCanvas() {
 function downloadImage(format) {
     if (!mainImg) return;
     
-    let mimeType = format === 'avif' ? 'image/avif' : 'image/webp';
-    let dataUrl = canvas.toDataURL(mimeType, 0.9);
+    let mimeType;
+    let quality = 0.9;
+    
+    if (format === 'avif') {
+        mimeType = 'image/avif';
+    } else if (format === 'jpeg' || format === 'jpg') {
+        mimeType = 'image/jpeg';
+        quality = 0.5; // Olabildiğince sıkıştırılmış yüksek performanslı JPEG
+    } else {
+        mimeType = 'image/webp';
+    }
+    
+    let dataUrl = canvas.toDataURL(mimeType, quality);
     
     if (format === 'avif' && dataUrl.startsWith('data:image/png')) {
         alert("Tarayıcınız AVIF formatında dışa aktarmayı desteklemiyor. Otomatik olarak WEBP formatında indirilecek.");
@@ -652,8 +667,9 @@ function downloadImage(format) {
         format = 'webp';
     }
     
+    const ext = format === 'jpeg' ? 'jpg' : format;
     const link = document.createElement('a');
-    link.download = `blog-gorseli-${Date.now()}.${format}`;
+    link.download = `blog-gorseli-${Date.now()}.${ext}`;
     link.href = dataUrl;
     document.body.appendChild(link);
     link.click();
